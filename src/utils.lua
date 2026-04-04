@@ -3050,26 +3050,29 @@ function SMODS.scale_card(card, args)
     args.block_overrides = args.block_overrides or {}
     args.ref_table = args.ref_table or card.ability.extra
     args.scalar_table = args.scalar_table or args.ref_table
+	args.do_calc_scaling = args.do_calc_scaling ~= nil and args.do_calc_scaling or true
     local initial = args.ref_table[args.ref_value]
     local scalar_value = args.scalar_table[args.scalar_value]
     if args.operation == '-' and scalar_value < 0 then scalar_value = scalar_value * -1 end
     local scaling_message = args.scaling_message
     local scaling_responses = {}
-    for _, area in ipairs(SMODS.get_card_areas('jokers')) do
-        for _, _card in ipairs(area.cards) do
-            local obj = _card.config.center
-            if obj.calc_scaling and type(obj.calc_scaling) == "function" then
-                local ret = obj:calc_scaling(_card, card, initial, scalar_value, args)
-                if ret then
-                    if ret.override_value and not args.block_overrides.value then initial = ret.override_value.value; SMODS.calculate_effect(ret.override_value, _card) end
-                    if ret.override_scalar_value and not args.block_overrides.scalar then scalar_value = ret.override_scalar_value.value; SMODS.calculate_effect(ret.override_scalar_value, _card) end
-                    if ret.override_message and not args.block_overrides.message then scaling_message = SMODS.merge_defaults(ret.override_message, scaling_message) end
-                    if ret.post then ret.post.source = _card; scaling_responses[#scaling_responses + 1] = ret.post end
-                    SMODS.calculate_effect(ret, _card)
-                end
-            end
-        end
-    end
+	if args.do_calc_scaling then
+	    for _, area in ipairs(SMODS.get_card_areas('jokers')) do
+	        for _, _card in ipairs(area.cards) do
+	            local obj = _card.config.center
+	            if obj.calc_scaling and type(obj.calc_scaling) == "function" then
+	                local ret = obj:calc_scaling(_card, card, initial, scalar_value, args)
+	                if ret then
+	                    if ret.override_value and not args.block_overrides.value then initial = ret.override_value.value; SMODS.calculate_effect(ret.override_value, _card) end
+	                    if ret.override_scalar_value and not args.block_overrides.scalar then scalar_value = ret.override_scalar_value.value; SMODS.calculate_effect(ret.override_scalar_value, _card) end
+	                    if ret.override_message and not args.block_overrides.message then scaling_message = SMODS.merge_defaults(ret.override_message, scaling_message) end
+	                    if ret.post then ret.post.source = _card; scaling_responses[#scaling_responses + 1] = ret.post end
+	                    SMODS.calculate_effect(ret, _card)
+	                end
+	            end
+	        end
+	    end
+	end
     if card.edition then
         local edition = G.P_CENTERS[card.edition.key]
         if edition.calc_scaling and type(edition.calc_scaling) == 'function' then
