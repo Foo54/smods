@@ -16,28 +16,11 @@ match_indent = true
 [[patches]]
 [patches.pattern]
 target = 'functions/common_events.lua'
-pattern = '''attention_text({
-                text = text,
-                scale = config.scale or 1, 
-                hold = delay - 0.2,
-                colour = extra and extra.text_colour,
-                backdrop_colour = colour,
-                align = card_aligned,
-                major = card,
-                offset = {x = 0, y = y_off}
-            })'''
-position = 'at'
-payload = '''attention_text({
-                text = text,
-                scale = config.scale or 1, 
-                hold = delay - 0.2,
-                colour = extra and extra.text_colour,
-                backdrop_colour = colour,
-                align = card_aligned,
-                major = card,
-                offset = {x = 0, y = y_off},
-								font = extra and extra.font and (type(extra.font) == "table" and extra.font or G.FONTS[extra.font] or SMODS.Fonts[extra.font]) 
-            })'''
+pattern = '''offset = {x = 0, y = y_off}'''
+position = 'before'
+payload = '''
+font = extra and extra.font and (type(extra.font) == "table" and extra.font or G.FONTS[extra.font] or SMODS.Fonts[extra.font]),
+'''
 match_indent = true
 
 
